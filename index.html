@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arizona Family Vacation Concierge | Michael The Travel Guy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sand: #F5EDD8;
+      --ocean: #1A4A6B;
+      --coral: #E8624A;
+      --gold: #D4A843;
+      --seafoam: #4A9B8E;
+      --cream: #FDFAF4;
+      --dark: #1C1C1E;
+      --mid: #6B6B6B;
+      --light: #E8E0D0;
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--dark);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── BACKGROUND ── */
+    .bg-layer {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(26,74,107,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 85% 80%, rgba(74,155,142,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 50% 50%, rgba(212,168,67,0.04) 0%, transparent 60%);
+    }
+
+    /* ── LAYOUT ── */
+    #root { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+
+    .header {
+      width: 100%; padding: 20px 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(26,74,107,0.1);
+      background: rgba(253,250,244,0.85); backdrop-filter: blur(12px);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .header-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px; font-weight: 700; color: var(--ocean);
+      letter-spacing: -0.3px;
+    }
+    .header-logo span { color: var(--coral); }
+    .header-sub { font-size: 12px; color: var(--mid); font-weight: 400; }
+
+    .main { flex: 1; width: 100%; max-width: 720px; padding: 40px 24px 80px; }
+
+    /* ── PROGRESS ── */
+    .progress-wrap { margin-bottom: 32px; }
+    .progress-label { font-size: 12px; color: var(--mid); font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; display: flex; justify-content: space-between; }
+    .progress-bar { height: 3px; background: var(--light); border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--ocean), var(--seafoam)); border-radius: 99px; transition: width 0.5s cubic-bezier(0.4,0,0.2,1); }
+
+    /* ── QUESTION CARD ── */
+    .card {
+      background: white;
+      border: 1px solid rgba(26,74,107,0.08);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 4px 40px rgba(26,74,107,0.06), 0 1px 4px rgba(0,0,0,0.04);
+      animation: slideUp 0.4s cubic-bezier(0.4,0,0.2,1);
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .q-number { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--coral); margin-bottom: 12px; }
+    .q-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px; font-weight: 700; line-height: 1.3;
+      color: var(--ocean); margin-bottom: 8px;
+    }
+    .q-sub { font-size: 14px; color: var(--mid); margin-bottom: 28px; line-height: 1.5; }
+
+    /* ── OPTIONS ── */
+    .options-grid { display: grid; gap: 10px; }
+    .options-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+    .options-grid.cols-1 { grid-template-columns: 1fr; }
+
+    .option-btn {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 20px;
+      background: var(--cream);
+      border: 2px solid transparent;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .option-btn:hover { border-color: var(--ocean); background: rgba(26,74,107,0.04); transform: translateY(-1px); }
+    .option-btn.selected { border-color: var(--ocean); background: rgba(26,74,107,0.06); }
+    .option-btn.selected .opt-icon { background: var(--ocean); color: white; }
+    .opt-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: white; border: 1px solid var(--light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+    .opt-text { flex: 1; }
+    .opt-label { font-size: 15px; font-weight: 500; color: var(--dark); line-height: 1.2; }
+    .opt-desc { font-size: 12px; color: var(--mid); margin-top: 2px; }
+
+    /* ── TEXT INPUT ── */
+    .text-input {
+      width: 100%; padding: 14px 18px;
+      border: 2px solid var(--light); border-radius: 12px;
+      font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--dark);
+      background: var(--cream); outline: none;
+      transition: border-color 0.2s;
+    }
+    .text-input:focus { border-color: var(--ocean); }
+    .input-row { display: flex; gap: 12px; }
+    .input-row .text-input { flex: 1; }
+
+    /* ── NAV BUTTONS ── */
+    .nav-row { display: flex; gap: 12px; margin-top: 28px; justify-content: flex-end; }
+    .btn-back {
+      padding: 12px 24px; border-radius: 10px;
+      border: 2px solid var(--light); background: transparent;
+      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+      color: var(--mid); cursor: pointer; transition: all 0.2s;
+    }
+    .btn-back:hover { border-color: var(--ocean); color: var(--ocean); }
+    .btn-next {
+      padding: 12px 28px; border-radius: 10px;
+      border: none; background: var(--ocean);
+      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+      color: white; cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .btn-next:hover { background: #1d5680; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(26,74,107,0.25); }
+    .btn-next:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* ── TEASER RESULTS ── */
+    .teaser-section { text-align: center; margin-bottom: 36px; }
+    .teaser-eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--coral); margin-bottom: 12px; }
+    .teaser-title { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 900; color: var(--ocean); line-height: 1.2; margin-bottom: 10px; }
+    .teaser-sub { font-size: 15px; color: var(--mid); max-width: 460px; margin: 0 auto; line-height: 1.6; }
+
+    .teaser-cards { display: grid; gap: 14px; margin-bottom: 32px; }
+    .teaser-card {
+      background: white; border-radius: 16px; padding: 24px;
+      border: 1px solid var(--light);
+      display: flex; align-items: flex-start; gap: 18px;
+      position: relative; overflow: hidden;
+      filter: blur(0px);
+    }
+    .teaser-card.locked { filter: blur(3.5px); pointer-events: none; user-select: none; }
+    .teaser-badge {
+      width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+    }
+    .teaser-badge.b1 { background: rgba(26,74,107,0.1); }
+    .teaser-badge.b2 { background: rgba(232,98,74,0.1); }
+    .teaser-badge.b3 { background: rgba(74,155,142,0.1); }
+    .teaser-name { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--ocean); margin-bottom: 4px; }
+    .teaser-why { font-size: 13px; color: var(--mid); line-height: 1.5; }
+
+    .lock-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, transparent 0%, rgba(253,250,244,0.7) 40%, rgba(253,250,244,0.95) 100%);
+      display: flex; align-items: center; justify-content: flex-end; padding-right: 24px;
+    }
+    .lock-icon { font-size: 24px; }
+
+    .gate-cta-box {
+      background: linear-gradient(135deg, var(--ocean) 0%, #1d5f7a 100%);
+      border-radius: 18px; padding: 36px;
+      text-align: center; color: white;
+      box-shadow: 0 8px 40px rgba(26,74,107,0.25);
+    }
+    .gate-title { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .gate-sub { font-size: 14px; opacity: 0.8; margin-bottom: 28px; line-height: 1.5; }
+    .gate-fields { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+    .gate-input {
+      width: 100%; padding: 14px 18px;
+      border: none; border-radius: 10px;
+      background: rgba(255,255,255,0.15); color: white;
+      font-family: 'DM Sans', sans-serif; font-size: 15px; outline: none;
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: background 0.2s;
+    }
+    .gate-input::placeholder { color: rgba(255,255,255,0.55); }
+    .gate-input:focus { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.5); }
+    .btn-unlock {
+      width: 100%; padding: 16px;
+      border: none; border-radius: 12px;
+      background: var(--coral); color: white;
+      font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .btn-unlock:hover { background: #d4513a; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(232,98,74,0.4); }
+    .btn-unlock:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .gate-privacy { font-size: 11px; opacity: 0.6; margin-top: 12px; }
+
+    /* ── FULL RESULTS ── */
+    .results-header { text-align: center; margin-bottom: 40px; }
+    .results-eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--coral); margin-bottom: 12px; }
+    .results-name { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 900; color: var(--ocean); margin-bottom: 10px; line-height: 1.2; }
+    .results-sub { font-size: 15px; color: var(--mid); line-height: 1.6; }
+
+    .result-card {
+      background: white; border-radius: 20px;
+      border: 1px solid var(--light);
+      overflow: hidden; margin-bottom: 18px;
+      box-shadow: 0 2px 20px rgba(26,74,107,0.06);
+      animation: slideUp 0.4s ease both;
+    }
+    .result-card:nth-child(2) { animation-delay: 0.1s; }
+    .result-card:nth-child(3) { animation-delay: 0.2s; }
+
+    .result-card-header {
+      padding: 24px 28px 0;
+      display: flex; align-items: flex-start; gap: 16px;
+    }
+    .result-num {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--ocean); color: white;
+      font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .result-card:nth-child(2) .result-num { background: var(--coral); }
+    .result-card:nth-child(3) .result-num { background: var(--seafoam); }
+    .result-trip-name { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--ocean); margin-bottom: 2px; }
+    .result-tag {
+      display: inline-block; padding: 3px 10px; border-radius: 99px;
+      background: rgba(26,74,107,0.08); color: var(--ocean);
+      font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+    }
+    .result-card-body { padding: 18px 28px 24px; }
+    .result-desc { font-size: 14px; color: var(--dark); line-height: 1.65; margin-bottom: 16px; }
+    .result-why {
+      background: var(--cream); border-radius: 10px; padding: 14px 16px;
+      font-size: 13px; color: var(--mid); line-height: 1.55;
+      border-left: 3px solid var(--gold);
+    }
+    .result-why strong { color: var(--dark); }
+
+    .result-resorts { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .resort-chip {
+      padding: 5px 12px; border-radius: 99px;
+      background: white; border: 1px solid var(--light);
+      font-size: 12px; font-weight: 500; color: var(--dark);
+    }
+
+    /* ── CONSULT CTA ── */
+    .consult-cta {
+      margin-top: 32px;
+      background: linear-gradient(135deg, #E8624A 0%, #c94e38 100%);
+      border-radius: 20px; padding: 40px;
+      text-align: center; color: white;
+      box-shadow: 0 8px 40px rgba(232,98,74,0.3);
+    }
+    .cta-emoji { font-size: 40px; margin-bottom: 16px; }
+    .cta-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 800; margin-bottom: 10px; }
+    .cta-sub { font-size: 15px; opacity: 0.9; line-height: 1.6; margin-bottom: 28px; max-width: 420px; margin-left: auto; margin-right: auto; }
+    .btn-consult {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 16px 36px; border-radius: 12px;
+      background: white; color: var(--coral);
+      font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 700;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    .btn-consult:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.2); }
+    .cta-note { font-size: 12px; opacity: 0.7; margin-top: 14px; }
+
+    /* ── LOADING ── */
+    .loading-wrap { text-align: center; padding: 60px 20px; }
+    .loading-wave { display: flex; align-items: flex-end; justify-content: center; gap: 5px; height: 40px; margin-bottom: 24px; }
+    .wave-bar {
+      width: 6px; background: var(--ocean); border-radius: 99px;
+      animation: wave 1.2s ease-in-out infinite;
+    }
+    .wave-bar:nth-child(1) { animation-delay: 0s; }
+    .wave-bar:nth-child(2) { animation-delay: 0.15s; }
+    .wave-bar:nth-child(3) { animation-delay: 0.3s; }
+    .wave-bar:nth-child(4) { animation-delay: 0.45s; }
+    .wave-bar:nth-child(5) { animation-delay: 0.6s; }
+    @keyframes wave {
+      0%, 100% { height: 8px; opacity: 0.3; }
+      50% { height: 36px; opacity: 1; }
+    }
+    .loading-text { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--ocean); margin-bottom: 8px; }
+    .loading-sub { font-size: 14px; color: var(--mid); }
+
+    /* ── INTRO ── */
+    .intro-wrap { text-align: center; padding: 20px 0 10px; }
+    .intro-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 16px; border-radius: 99px;
+      background: rgba(26,74,107,0.08); color: var(--ocean);
+      font-size: 13px; font-weight: 500; margin-bottom: 28px;
+    }
+    .intro-title { font-family: 'Playfair Display', serif; font-size: 40px; font-weight: 900; color: var(--ocean); line-height: 1.15; margin-bottom: 16px; }
+    .intro-title em { color: var(--coral); font-style: normal; }
+    .intro-sub { font-size: 16px; color: var(--mid); line-height: 1.7; max-width: 500px; margin: 0 auto 36px; }
+    .intro-features { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-bottom: 40px; }
+    .intro-feat { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--mid); font-weight: 500; }
+    .intro-feat-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--seafoam); }
+    .btn-start {
+      padding: 18px 48px; border-radius: 14px;
+      border: none; background: var(--ocean);
+      font-family: 'DM Sans', sans-serif; font-size: 17px; font-weight: 700;
+      color: white; cursor: pointer; transition: all 0.25s;
+      box-shadow: 0 6px 30px rgba(26,74,107,0.25);
+      display: inline-flex; align-items: center; gap: 10px;
+    }
+    .btn-start:hover { background: #1d5680; transform: translateY(-2px); box-shadow: 0 10px 40px rgba(26,74,107,0.35); }
+    .intro-note { font-size: 12px; color: var(--mid); margin-top: 16px; }
+
+    /* ── SLIDER ── */
+    .slider-wrap { padding: 8px 0; }
+    input[type=range] {
+      width: 100%; height: 4px; border-radius: 99px;
+      -webkit-appearance: none;
+      background: linear-gradient(90deg, var(--ocean) var(--val, 50%), var(--light) var(--val, 50%));
+      outline: none; cursor: pointer;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--ocean); border: 3px solid white;
+      box-shadow: 0 2px 8px rgba(26,74,107,0.3);
+      cursor: pointer;
+    }
+    .slider-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--mid); margin-top: 10px; }
+    .slider-value { text-align: center; font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--ocean); margin-bottom: 12px; }
+
+    /* ── CHECKBOX MULTI ── */
+    .multi-option {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 18px;
+      background: var(--cream); border: 2px solid transparent;
+      border-radius: 12px; cursor: pointer; transition: all 0.2s;
+    }
+    .multi-option:hover { border-color: var(--ocean); }
+    .multi-option.checked { border-color: var(--ocean); background: rgba(26,74,107,0.05); }
+    .check-box {
+      width: 22px; height: 22px; border-radius: 6px;
+      border: 2px solid var(--light); background: white; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; font-size: 12px;
+    }
+    .multi-option.checked .check-box { background: var(--ocean); border-color: var(--ocean); color: white; }
+
+    @media (max-width: 600px) {
+      .main { padding: 24px 16px 60px; }
+      .card { padding: 28px 22px; }
+      .options-grid.cols-2 { grid-template-columns: 1fr; }
+      .intro-title { font-size: 30px; }
+      .q-text { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+<div class="bg-layer"></div>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel">
+const { useState, useCallback } = React;
+
+// ── CONFIG ──────────────────────────────────────────────────────────────────
+const GHL_WEBHOOK = "https://app.automationbooster.com/location/BubyqwIyxs5uy8b2bZgC/workflow/4719dd61-1537-4f49-8453-13933a4d04af";
+const CONSULT_URL = "https://michaelthetravelguy.com/chat";
+
+// ── QUESTIONS ───────────────────────────────────────────────────────────────
+const QUESTIONS = [
+  {
+    id: "group_size",
+    text: "How many people are joining this trip?",
+    sub: "Include everyone — we'll make sure there's room for the whole crew.",
+    type: "choice",
+    cols: 2,
+    options: [
+      { label: "Just the 2 of us", desc: "Couple's getaway", icon: "💑" },
+      { label: "Small family", desc: "3–4 travelers", icon: "👨‍👩‍👦" },
+      { label: "Bigger crew", desc: "5–7 travelers", icon: "👨‍👩‍👧‍👦" },
+      { label: "Group trip", desc: "8+ travelers", icon: "🎉" },
+    ],
+  },
+  {
+    id: "kids_ages",
+    text: "If kids are coming, what ages are we talking?",
+    sub: "This helps us match the right resort activities and kid programs.",
+    type: "multi",
+    options: [
+      { label: "No kids — adults only", icon: "🍹" },
+      { label: "Babies & toddlers (0–4)", icon: "🍼" },
+      { label: "Little kids (5–10)", icon: "🎠" },
+      { label: "Tweens (11–13)", icon: "🎮" },
+      { label: "Teens (14–17)", icon: "🏄" },
+    ],
+  },
+  {
+    id: "travel_window",
+    text: "When are you thinking of traveling?",
+    sub: "No need to have exact dates — a ballpark works great.",
+    type: "choice",
+    cols: 2,
+    options: [
+      { label: "Next 3 months", desc: "Let's go soon!", icon: "🚀" },
+      { label: "3–6 months out", desc: "Planning ahead", icon: "📅" },
+      { label: "6–12 months out", desc: "Plenty of runway", icon: "🗓️" },
+      { label: "Just exploring", desc: "No timeline yet", icon: "💭" },
+    ],
+  },
+  {
+    id: "budget",
+    text: "What's your rough budget per person?",
+    sub: "All-in estimate including flights, resort, and food.",
+    type: "slider",
+    min: 1000, max: 6000, step: 250, default: 2500,
+    format: (v) => v >= 6000 ? "$6,000+" : `$${v.toLocaleString()}`,
+  },
+  {
+    id: "vibe",
+    text: "What's the vibe you're going for?",
+    sub: "Pick the one that makes you say 'yes, that's us.'",
+    type: "choice",
+    cols: 2,
+    options: [
+      { label: "Beach & Chill", desc: "Sun, sand, zero agenda", icon: "🏖️" },
+      { label: "Adventure Mode", desc: "Zip lines, excursions, explore", icon: "🧗" },
+      { label: "Family Fun", desc: "Water parks, activities, memories", icon: "🎡" },
+      { label: "Romance & Luxury", desc: "Elevated everything", icon: "✨" },
+    ],
+  },
+  {
+    id: "travel_type",
+    text: "Are you more of a resort person or a cruise person?",
+    sub: "Or maybe you're open to both — that's cool too.",
+    type: "choice",
+    cols: 1,
+    options: [
+      { label: "All-inclusive resort — plant the flag and stay", icon: "🏨", desc: "One spot, everything included" },
+      { label: "Cruise — wake up somewhere new every day", icon: "🚢", desc: "Ports, activities, sea days" },
+      { label: "Either one sounds great to me", icon: "🤷", desc: "Show me both options" },
+    ],
+  },
+  {
+    id: "international_exp",
+    text: "Have you traveled internationally before?",
+    sub: "Helps us calibrate how much hand-holding (or not) you'll want.",
+    type: "choice",
+    cols: 2,
+    options: [
+      { label: "First time!", desc: "New to international travel", icon: "🌍" },
+      { label: "Been a few times", desc: "Some experience", icon: "✈️" },
+      { label: "Pretty seasoned", desc: "Frequent traveler", icon: "🗺️" },
+      { label: "We travel often", desc: "Multiple trips a year", icon: "🧳" },
+    ],
+  },
+  {
+    id: "top_priority",
+    text: "What's the #1 thing this trip MUST have?",
+    sub: "Be honest — we'll build your trip around this.",
+    type: "choice",
+    cols: 2,
+    options: [
+      { label: "Incredible food", desc: "Fine dining, foodie experiences", icon: "🍽️" },
+      { label: "Epic pools & beach", desc: "Water all day every day", icon: "🏊" },
+      { label: "Kids entertained 24/7", desc: "So parents can breathe", icon: "🎯" },
+      { label: "Nightlife & energy", desc: "Music, bars, vibes", icon: "🎶" },
+      { label: "Peaceful & quiet", desc: "Actual rest and relaxation", icon: "😌" },
+      { label: "Adventure & excursions", desc: "Get out and explore", icon: "🌋" },
+    ],
+  },
+  {
+    id: "occasion",
+    text: "Is there a special occasion we should know about?",
+    sub: "We can make sure the resort (and sometimes the resort staff!) knows.",
+    type: "multi",
+    options: [
+      { label: "No special occasion — just a vacation", icon: "🌴" },
+      { label: "Anniversary or honeymoon", icon: "💍" },
+      { label: "Birthday celebration", icon: "🎂" },
+      { label: "Family reunion", icon: "👨‍👩‍👧‍👦" },
+      { label: "Graduation trip", icon: "🎓" },
+    ],
+  },
+  {
+    id: "departure",
+    text: "Where will you be flying out of?",
+    sub: "Most East Valley families fly out of PHX — just want to confirm.",
+    type: "choice",
+    cols: 2,
+    options: [
+      { label: "Phoenix Sky Harbor (PHX)", desc: "Most common choice", icon: "✈️" },
+      { label: "Mesa Gateway (AZA)", desc: "Great for some routes", icon: "🛫" },
+      { label: "Willing to fly from anywhere", desc: "Best deal wins", icon: "🌐" },
+      { label: "Not sure yet", desc: "We can figure it out", icon: "🤔" },
+    ],
+  },
+];
+
+// ── HELPERS ─────────────────────────────────────────────────────────────────
+function buildAnswerSummary(answers) {
+  return QUESTIONS.map(q => {
+    const a = answers[q.id];
+    if (!a) return null;
+    let val = "";
+    if (q.type === "slider") val = q.format(a);
+    else if (q.type === "multi") val = Array.isArray(a) ? a.join(", ") : a;
+    else val = a;
+    return `${q.text}: ${val}`;
+  }).filter(Boolean).join("\n");
+}
+
+async function callClaudeAPI(answers) {
+  const summary = buildAnswerSummary(answers);
+  const prompt = `You are a luxury travel advisor AI for "Michael The Travel Guy" — an Arizona-based travel consultant specializing in all-inclusive resorts and cruises, primarily serving East Valley families (Gilbert, Chandler, Mesa, Tempe, Queen Creek).
+
+Based on the following client quiz answers, generate exactly 3 personalized vacation recommendations. Return ONLY valid JSON — no markdown, no explanation, just the JSON object.
+
+CLIENT ANSWERS:
+${summary}
+
+Return this exact JSON structure:
+{
+  "trips": [
+    {
+      "name": "Short catchy trip name (e.g. 'The Yucatan Family Escape')",
+      "tag": "Trip type tag (e.g. 'All-Inclusive Beach', 'Family Adventure', 'Luxury Cruise')",
+      "emoji": "One relevant emoji",
+      "description": "2–3 sentences describing this vacation experience in vivid, exciting terms. Make it feel real.",
+      "why_it_fits": "1–2 sentences explaining exactly why THIS matches the client's specific answers. Be specific — reference their priorities.",
+      "resorts": ["Resort or ship name 1", "Resort or ship name 2", "Resort or ship name 3"]
+    },
+    { ... },
+    { ... }
+  ],
+  "headline": "Short personalized headline like 'Your Perfect Caribbean Escape Awaits, [first name if known]' — if no name, use 'Your Perfect Trip Is Closer Than You Think'",
+  "summary": "One warm sentence summarizing what makes their ideal trip special."
+}`;
+
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 1000,
+      messages: [{ role: "user", content: prompt }],
+    }),
+  });
+  const data = await response.json();
+  const text = data.content?.map(b => b.text || "").join("") || "";
+  const clean = text.replace(/```json|```/g, "").trim();
+  return JSON.parse(clean);
+}
+
+async function sendToGHL(lead, answers, trips) {
+  const tripTags = trips.map(t => t.tag).join(", ");
+  const payload = {
+    first_name: lead.name.split(" ")[0] || lead.name,
+    last_name: lead.name.split(" ").slice(1).join(" ") || "",
+    email: lead.email,
+    phone: lead.phone,
+    tags: tripTags,
+    source: "AI Concierge — michaelthetravelguy.com",
+    quiz_answers: buildAnswerSummary(answers),
+    trip_style_1: trips[0]?.name || "",
+    trip_style_2: trips[1]?.name || "",
+    trip_style_3: trips[2]?.name || "",
+    trip_tags: tripTags,
+    budget: answers.budget ? `$${answers.budget.toLocaleString()}` : "",
+    travel_window: answers.travel_window || "",
+    vibe: answers.vibe || "",
+    group_size: answers.group_size || "",
+  };
+
+  try {
+    await fetch(GHL_WEBHOOK, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      mode: "no-cors",
+    });
+  } catch (e) {
+    console.warn("GHL webhook:", e);
+  }
+}
+
+// ── COMPONENTS ───────────────────────────────────────────────────────────────
+
+function IntroScreen({ onStart }) {
+  return (
+    <div className="card">
+      <div className="intro-wrap">
+        <div className="intro-badge">🌴 Powered by AI · Built for Arizona Families</div>
+        <div className="intro-title">Find Your <em>Perfect</em> Family Vacation in 2 Minutes</div>
+        <div className="intro-sub">
+          Answer 10 quick questions and I'll match your family to 3 hand-picked trip styles — all-inclusive resorts, cruises, and everything in between. No generic lists. Just real recommendations that fit your family.
+        </div>
+        <div className="intro-features">
+          {["Personalized just for you","Family-tested resorts","Phoenix departures","Free consultation included"].map(f => (
+            <div className="intro-feat" key={f}>
+              <div className="intro-feat-dot"></div>
+              {f}
+            </div>
+          ))}
+        </div>
+        <button className="btn-start" onClick={onStart}>
+          Find My Perfect Trip ✈️
+        </button>
+        <div className="intro-note">Free · No commitment · Takes about 2 minutes</div>
+      </div>
+    </div>
+  );
+}
+
+function QuestionCard({ question, value, onChange, onNext, onBack, stepNum, totalSteps }) {
+  const pct = Math.round((stepNum / totalSteps) * 100);
+  const canNext = (() => {
+    if (question.type === "slider") return true;
+    if (question.type === "multi") return Array.isArray(value) && value.length > 0;
+    return !!value;
+  })();
+
+  function toggleMulti(label) {
+    const curr = Array.isArray(value) ? value : [];
+    if (curr.includes(label)) onChange(curr.filter(x => x !== label));
+    else onChange([...curr, label]);
+  }
+
+  function handleSlider(e) {
+    const v = Number(e.target.value);
+    const pctVal = ((v - question.min) / (question.max - question.min) * 100).toFixed(1) + "%";
+    e.target.style.setProperty("--val", pctVal);
+    onChange(v);
+  }
+
+  const sliderVal = value || question.default || question.min;
+
+  return (
+    <div className="card">
+      <div className="progress-wrap">
+        <div className="progress-label">
+          <span>Your trip profile</span>
+          <span>{stepNum} of {totalSteps}</span>
+        </div>
+        <div className="progress-bar"><div className="progress-fill" style={{width: pct + "%"}}></div></div>
+      </div>
+
+      <div className="q-number">Question {stepNum}</div>
+      <div className="q-text">{question.text}</div>
+      {question.sub && <div className="q-sub">{question.sub}</div>}
+
+      {question.type === "choice" && (
+        <div className={`options-grid cols-${question.cols || 2}`}>
+          {question.options.map(opt => (
+            <button
+              key={opt.label}
+              className={`option-btn ${value === opt.label ? "selected" : ""}`}
+              onClick={() => onChange(opt.label)}
+            >
+              <div className="opt-icon">{opt.icon}</div>
+              <div className="opt-text">
+                <div className="opt-label">{opt.label}</div>
+                {opt.desc && <div className="opt-desc">{opt.desc}</div>}
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {question.type === "multi" && (
+        <div className="options-grid cols-1">
+          {question.options.map(opt => {
+            const isChecked = Array.isArray(value) && value.includes(opt.label);
+            return (
+              <div key={opt.label} className={`multi-option ${isChecked ? "checked" : ""}`} onClick={() => toggleMulti(opt.label)}>
+                <div className="check-box">{isChecked ? "✓" : ""}</div>
+                <div className="opt-icon" style={{fontSize:"20px"}}>{opt.icon}</div>
+                <div className="opt-label">{opt.label}</div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {question.type === "slider" && (
+        <div className="slider-wrap">
+          <div className="slider-value">{question.format(sliderVal)}</div>
+          <input type="range"
+            min={question.min} max={question.max} step={question.step}
+            value={sliderVal}
+            style={{"--val": ((sliderVal - question.min) / (question.max - question.min) * 100).toFixed(1) + "%"}}
+            onChange={handleSlider}
+          />
+          <div className="slider-labels">
+            <span>{question.format(question.min)}</span>
+            <span>{question.format(question.max)}</span>
+          </div>
+        </div>
+      )}
+
+      <div className="nav-row">
+        {stepNum > 1 && <button className="btn-back" onClick={onBack}>← Back</button>}
+        <button className="btn-next" onClick={onNext} disabled={!canNext}>
+          {stepNum === totalSteps ? "See My Matches 🎉" : "Next →"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function TeaserResults({ trips, onSubmitLead }) {
+  const [lead, setLead] = useState({ name: "", email: "", phone: "" });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const canSubmit = lead.name.trim() && lead.email.includes("@") && lead.phone.length >= 10;
+
+  async function handleSubmit() {
+    if (!canSubmit) return;
+    setLoading(true);
+    setError("");
+    try {
+      await onSubmitLead(lead);
+    } catch (e) {
+      setError("Something went wrong — please try again.");
+      setLoading(false);
+    }
+  }
+
+  const badgeClasses = ["b1", "b2", "b3"];
+
+  return (
+    <div className="card">
+      <div className="teaser-section">
+        <div className="teaser-eyebrow">🎯 Your Results Are Ready</div>
+        <div className="teaser-title">We Found 3 Trips That Fit Your Family</div>
+        <div className="teaser-sub">Here's a sneak peek. Enter your info below to unlock the full recommendations with resort names, details, and your personalized recap.</div>
+      </div>
+
+      <div className="teaser-cards">
+        {trips.map((trip, i) => (
+          <div key={i} className={`teaser-card ${i > 0 ? "locked" : ""}`} style={{position:"relative"}}>
+            <div className={`teaser-badge ${badgeClasses[i]}`}>{trip.emoji}</div>
+            <div>
+              <div className="teaser-name">{trip.name}</div>
+              <div className="teaser-why">{i === 0 ? trip.why_it_fits : "Unlock to see why this fits your family..."}</div>
+            </div>
+            {i > 0 && (
+              <div className="lock-overlay">
+                <div className="lock-icon">🔒</div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="gate-cta-box">
+        <div className="gate-title">Unlock Your Full Trip Plan</div>
+        <div className="gate-sub">Get all 3 recommendations with resort names, pricing context, and a personalized recap sent straight to your inbox.</div>
+        <div className="gate-fields">
+          <input className="gate-input" placeholder="Your full name" value={lead.name} onChange={e => setLead({...lead, name: e.target.value})} />
+          <input className="gate-input" type="email" placeholder="Email address" value={lead.email} onChange={e => setLead({...lead, email: e.target.value})} />
+          <input className="gate-input" type="tel" placeholder="Phone number" value={lead.phone} onChange={e => setLead({...lead, phone: e.target.value})} />
+        </div>
+        {error && <div style={{color:"#ffaaaa", fontSize:"13px", marginBottom:"12px"}}>{error}</div>}
+        <button className="btn-unlock" onClick={handleSubmit} disabled={!canSubmit || loading}>
+          {loading ? "Sending your results..." : "🔓 Unlock My Full Trip Plan"}
+        </button>
+        <div className="gate-privacy">🔒 No spam, ever. I'm Michael — a real person, not a bot. I'll only reach out with your trip info.</div>
+      </div>
+    </div>
+  );
+}
+
+function FullResults({ trips, data, lead }) {
+  return (
+    <div>
+      <div className="results-header">
+        <div className="results-eyebrow">✈️ Your Personalized Trip Plan</div>
+        <div className="results-name">{data.headline}</div>
+        <div className="results-sub">{data.summary} A full recap is on its way to {lead.email}.</div>
+      </div>
+
+      {trips.map((trip, i) => (
+        <div key={i} className="result-card">
+          <div className="result-card-header">
+            <div className="result-num">{i + 1}</div>
+            <div>
+              <div className="result-trip-name">{trip.emoji} {trip.name}</div>
+              <span className="result-tag">{trip.tag}</span>
+            </div>
+          </div>
+          <div className="result-card-body">
+            <div className="result-desc">{trip.description}</div>
+            <div className="result-why"><strong>Why it fits you:</strong> {trip.why_it_fits}</div>
+            {trip.resorts?.length > 0 && (
+              <div className="result-resorts">
+                {trip.resorts.map(r => <span key={r} className="resort-chip">📍 {r}</span>)}
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+
+      <div className="consult-cta">
+        <div className="cta-emoji">🏝️</div>
+        <div className="cta-title">Ready to Make This Real?</div>
+        <div className="cta-sub">I'm Michael — and I book these exact trips for East Valley families every week. Let's spend 15 minutes together and turn your match into an actual itinerary with pricing.</div>
+        <a href={CONSULT_URL} target="_blank" rel="noopener noreferrer" className="btn-consult">
+          Book My Free Consultation →
+        </a>
+        <div className="cta-note">Free · No obligation · I'll handle everything</div>
+      </div>
+    </div>
+  );
+}
+
+function LoadingScreen() {
+  return (
+    <div className="card">
+      <div className="loading-wrap">
+        <div className="loading-wave">
+          {[1,2,3,4,5].map(i => <div key={i} className="wave-bar"></div>)}
+        </div>
+        <div className="loading-text">Building your trip matches...</div>
+        <div className="loading-sub">Analyzing your answers and finding the perfect fit</div>
+      </div>
+    </div>
+  );
+}
+
+// ── APP ──────────────────────────────────────────────────────────────────────
+function App() {
+  const [screen, setScreen] = useState("intro"); // intro | quiz | loading | teaser | results
+  const [step, setStep] = useState(0);
+  const [answers, setAnswers] = useState({});
+  const [aiData, setAiData] = useState(null);
+  const [lead, setLead] = useState(null);
+
+  function handleAnswer(val) {
+    setAnswers(prev => ({ ...prev, [QUESTIONS[step].id]: val }));
+  }
+
+  async function handleNext() {
+    // Make sure current slider answer is saved
+    const q = QUESTIONS[step];
+    if (q.type === "slider" && !answers[q.id]) {
+      setAnswers(prev => ({ ...prev, [q.id]: q.default || q.min }));
+    }
+
+    if (step < QUESTIONS.length - 1) {
+      setStep(s => s + 1);
+    } else {
+      // All questions done — call AI
+      setScreen("loading");
+      try {
+        const finalAnswers = {
+          ...answers,
+          ...(q.type === "slider" && !answers[q.id] ? { [q.id]: q.default || q.min } : {}),
+        };
+        const data = await callClaudeAPI(finalAnswers);
+        setAiData(data);
+        setScreen("teaser");
+      } catch (e) {
+        console.error(e);
+        alert("Hmm, something went wrong generating your results. Please try again.");
+        setScreen("quiz");
+      }
+    }
+  }
+
+  async function handleLeadSubmit(leadInfo) {
+    setLead(leadInfo);
+    // Fire GHL webhook
+    if (aiData?.trips) {
+      await sendToGHL(leadInfo, answers, aiData.trips);
+    }
+    setScreen("results");
+  }
+
+  return (
+    <>
+      <div className="header">
+        <div>
+          <div className="header-logo">Michael<span>The Travel Guy</span></div>
+          <div className="header-sub">East Valley's Family Vacation Specialist</div>
+        </div>
+        <div style={{fontSize:"13px", color:"var(--mid)"}}>🔒 Free · No commitment</div>
+      </div>
+
+      <div className="main">
+        {screen === "intro" && <IntroScreen onStart={() => setScreen("quiz")} />}
+
+        {screen === "quiz" && (
+          <QuestionCard
+            question={QUESTIONS[step]}
+            value={answers[QUESTIONS[step].id]}
+            onChange={handleAnswer}
+            onNext={handleNext}
+            onBack={() => step > 0 ? setStep(s => s - 1) : setScreen("intro")}
+            stepNum={step + 1}
+            totalSteps={QUESTIONS.length}
+          />
+        )}
+
+        {screen === "loading" && <LoadingScreen />}
+
+        {screen === "teaser" && aiData && (
+          <TeaserResults trips={aiData.trips} onSubmitLead={handleLeadSubmit} />
+        )}
+
+        {screen === "results" && aiData && lead && (
+          <FullResults trips={aiData.trips} data={aiData} lead={lead} />
+        )}
+      </div>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
